@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Trading Form</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-image: url(/static/bg.jpg);
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .container {
+            max-width: 1024px;
+            margin: 20px; /* Add space around the form */
+            background-color: rgba(255, 255, 255, 0.8); /* Add a semi-transparent white background to the container */
+            padding: 40px; /* Add padding to the container */
+            border-radius: 10px; /* Add border-radius for a rounded appearance */
+        }
+        .btn-primary {
+        width: 100%;
+        padding: 10px;
+        font-size: 18px;
+        font-size: 20px;
+        }
+        #token_generator{
+            width: 40%;
+            background-color: #0d6efd;
+            border-radius: 5px;
+            margin-bottom:20px;
+            padding: 10px
+        }
+        a {
+            color:white;
+            font-size: 20px;
+            text-decoration: none
+        }
+        #token_generator:hover {
+        background-color: rgb(51, 51, 255);
+        }
+        #access{
+            margin-right:40px;
+            margin-bottom:40px
+        }
+        .margins{
+            margin-top:40px;
+            margin-bottom:40px;
+        }
+        p {
+            margin-bottom: 0.2rem;
+        }
+        @media (max-width: 480px) {
+            .container {
+                min-width: 100%;
+                padding-top: 40%;
+            }
+        }
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 1024px;
+                margin-top: 20%;
+            }
+        }
+        @media (min-width: 1400px) {
+            .container {
+                max-width: 1024px;
+                margin-top: 5%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button type="button" id="token_generator" name="token" value="token_generator"><a href="https://kite.zerodha.com/connect/login?api_key=4kphycxxs6nm7ukf">Token Generator</a></button>
+        <form action="/tradestock" method="post"> <!-- Add your action URL here -->
+            <div class="row mb-3">
+                <div class="col">
+                    <input type="text" class="form-control form-control-lg" placeholder="Enter Access Token" name="access_token" >
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control form-control-lg" placeholder="Enter Index Name" name="index" >
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <!-- Add more fields as needed -->
+                    <input type="number" class="form-control form-control-lg" placeholder="Enter Xforindex" name="xforindex" >
+                </div>
+                <div class="col">
+                    <!-- Add more fields as needed -->
+                    <input type="number" class="form-control form-control-lg" placeholder="Enter Xforbuyprice" name="xforbuyprice" >
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <!-- Add more fields as needed -->
+                    <input type="text" class="form-control form-control-lg" placeholder="Enter Xfortriggerprice_buy" name="xfortriggerprice_buy" >
+                </div>
+                <div class="col">
+                    <!-- Add more fields as needed -->
+                    <input type="number" class="form-control form-control-lg" placeholder="Enter quantity" name="quantity" >
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <!-- Add more fields as needed -->
+                    <input type="text" class="form-control form-control-lg" placeholder="Enter Xforadd_up_sell" name="xforadd_up_sell" >
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control form-control-lg" id="access" placeholder="Enter Xforsub_down_sell" name="xforsub_down_sell">
+                </div>
+            <!-- Add more rows for additional fields -->
+            <button type="submit" class="btn btn-primary btn-block">Submit</button> <!-- Add a submit button -->
+        </form>
+        <div class="margins">
+            <p class="h5 text-muted">Instructions :</p>
+            <p class="text-muted">Index Name - Index Name of which you want get open price @10:00AM</p>
+            <p class="text-muted">Xforindex - Amount to be added for open index price</p>
+            <p class="text-muted">Xforbuyprice - Amount to be added for CE & PE low price</p>
+            <p class="text-muted">Xfortriggerprice_buy - Amount to be subtracted to stock buy price</p>
+            <p class="text-muted">Quantity - Stock quantity</p>
+            <p class="text-muted">Xforadd_up_sell - Amount to be added to Sell Stock when graph goes up</p>
+            <p class="text-muted">Xforsub_down_sell - Amount to be added to Sell Stock when graph goes down</p>
+        </div>
+    </div>
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>
