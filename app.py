@@ -59,7 +59,7 @@ def main():
             rounded_openindex = round(roundfig_openindex / 50 + 0.5) * 50
         elif dynamic_index == 'BANKNIFTY':
             rounded_openindex = round(roundfig_openindex / 100 + 0.5) * 100
-        return str(rounded_openindex)
+        #return str(rounded_openindex)
         ce_strike = str(int(rounded_openindex) - int(dynamic_xforindex))
         pe_strike = str(int(rounded_openindex) + int(dynamic_xforindex))
         #return [ce_strike,pe_strike]
