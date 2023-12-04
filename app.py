@@ -51,7 +51,7 @@ def main():
             dynamic_xfor_sub_down_sell = request.form.get('xfor_sub_down_sell')
 
         get_index = get_index_info(dynamic_index,access_token)
-        return str(get_index)
+        #return str(get_index)
         if not isinstance(get_index, (int, float, complex)):
             raise ValueError(get_index)
         roundfig_openindex = round(get_index)
