@@ -8,6 +8,7 @@ logging.basicConfig(level=logging.DEBUG)
 #kite instance
 kite_api_key = "4kphycxxs6nm7ukf"
 kite_api_secret = "4ucdchle2rn2of6r0vgsh0o15v2sm6kn"
+kite_api_link = "https://kite.zerodha.com/connect/login?api_key=4kphycxxs6nm7ukf"
 kite = KiteConnect(kite_api_key)
 #register app
 app = Flask(__name__,template_folder='templates',static_folder='static')
@@ -62,17 +63,25 @@ def main():
         #return str(rounded_openindex)
         ce_strike = str(int(rounded_openindex) - int(dynamic_xforindex))
         pe_strike = str(int(rounded_openindex) + int(dynamic_xforindex))
-        #return [ce_strike,pe_strike]
+        #response_data = {'ce_strike': ce_strike,'pe_strike': pe_strike}
+        #return jsonify(response_data)
+        ##return [ce_strike,pe_strike]
         ce_strike_lp = get_strike_lowprice(dynamic_index,ce_strike,"CE",access_token)
         pe_strike_lp = get_strike_lowprice(dynamic_index,pe_strike,"PE",access_token)
         ce_strike_lp.extend([dynamic_xforbuy,dynamic_xfortriggerprice_buy,dynamic_quantity])
         pe_strike_lp.extend([dynamic_xforbuy,dynamic_xfortriggerprice_buy,dynamic_quantity])
-        #return [ce_strike_lp,pe_strike_lp]
+        #response_data = {'ce_strike_lp': ce_strike_lp,'pe_strike_lp': pe_strike_lp}
+        #return jsonify(response_data)
+        ##return [ce_strike_lp,pe_strike_lp]
         items_to_buy = [ce_strike_lp,pe_strike_lp]
         triggered_buy_data_ids = buy_stock(items_to_buy,access_token)
-        #return triggered_buy_data_ids
+        #response_data = {'triggered_buy_data_ids': triggered_buy_data_ids}
+        #return jsonify(response_data)
+        ##return triggered_buy_data_ids
         complete_order_dict = check_and_cancel_order(triggered_buy_data_ids,access_token)
-        #return complete_order_dict
+        #response_data = {'complete_order_dict': complete_order_dict}
+        #return jsonify(response_data)
+        ##return complete_order_dict
         sell_order_id = orderlist_check_placesell(complete_order_dict['average_price'],complete_order_dict['tradingsymbol'],complete_order_dict['quantity'],dynamic_xfor_add_up_sell,dynamic_xfor_sub_down_sell,access_token)
         return sell_order_id
         
