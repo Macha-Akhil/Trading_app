@@ -41,6 +41,8 @@ def login():
 def main():
     try :
         if request.method == 'POST':
+            #for key, value in request.form.items():
+                #print(f'{key}: {value}')
             access_token = request.form.get('access_token')
             kite.set_access_token(access_token)
             dynamic_index = request.form.get('index')
@@ -65,28 +67,23 @@ def main():
         pe_strike = str(int(rounded_openindex) + int(dynamic_xforindex))
         #response_data = {'ce_strike': ce_strike,'pe_strike': pe_strike}
         #return jsonify(response_data)
-        ##return [ce_strike,pe_strike]
+        #return [ce_strike,pe_strike]
         ce_strike_lp = get_strike_lowprice(dynamic_index,ce_strike,"CE",access_token)
         pe_strike_lp = get_strike_lowprice(dynamic_index,pe_strike,"PE",access_token)
+        #return [ce_strike_lp,pe_strike_lp]
         ce_strike_lp.extend([dynamic_xforbuy,dynamic_xfortriggerprice_buy,dynamic_quantity])
         pe_strike_lp.extend([dynamic_xforbuy,dynamic_xfortriggerprice_buy,dynamic_quantity])
-        #response_data = {'ce_strike_lp': ce_strike_lp,'pe_strike_lp': pe_strike_lp}
-        #return jsonify(response_data)
-        ##return [ce_strike_lp,pe_strike_lp]
+        #return [ce_strike_lp,pe_strike_lp]
         items_to_buy = [ce_strike_lp,pe_strike_lp]
         triggered_buy_data_ids = buy_stock(items_to_buy,access_token)
-        #response_data = {'triggered_buy_data_ids': triggered_buy_data_ids}
-        #return jsonify(response_data)
-        ##return triggered_buy_data_ids
+        #return triggered_buy_data_ids
         complete_order_dict = check_and_cancel_order(triggered_buy_data_ids,access_token)
-        #response_data = {'complete_order_dict': complete_order_dict}
-        #return jsonify(response_data)
-        ##return complete_order_dict
+        #return complete_order_dict
         sell_order_id = orderlist_check_placesell(complete_order_dict['average_price'],complete_order_dict['tradingsymbol'],complete_order_dict['quantity'],dynamic_xfor_add_up_sell,dynamic_xfor_sub_down_sell,access_token)
         return sell_order_id
         
     except Exception as e:
-        return json.dumps({"Error":str(e)}),500
+        return json.dumps({"Error in main_app.py":str(e)}),500
 
 if __name__ == '__main__':
-     app.run(debug=True)
+     app.run(port=5001,debug=True)
