@@ -84,10 +84,10 @@
         <form action="/tradestock" method="post"> <!-- Add your action URL here -->
             <div class="row mb-3">
                 <div class="col">
-                    <input type="text" class="form-control form-control-lg" placeholder="Enter Access Token" name="access_token" >
+                    <input type="text" class="form-control form-control-lg" placeholder="Enter Access Token" name="access_token" Required>
                 </div>
                 <div class="col">
-                    <input type="text" class="form-control form-control-lg" list="indexList" placeholder="Enter Index Name" name="index" >
+                    <input type="text" class="form-control form-control-lg" list="indexList" placeholder="Enter Index Name" name="index" Required>
                     <datalist id="indexList">
                         <option value="BANKNIFTY">
                         <option value="NIFTY 50">
@@ -97,30 +97,30 @@
             <div class="row mb-3">
                 <div class="col">
                     <!-- Add more fields as needed -->
-                    <input type="number" class="form-control form-control-lg" placeholder="Enter Xforindex" name="xforindex" >
+                    <input type="number" class="form-control form-control-lg" placeholder="Enter Xforindex" name="xforindex" Required>
                 </div>
                 <div class="col">
                     <!-- Add more fields as needed -->
-                    <input type="number" class="form-control form-control-lg" placeholder="Enter Xforbuyprice" name="xforbuyprice" >
+                    <input type="number" class="form-control form-control-lg" placeholder="Enter Xforbuyprice" name="xforbuyprice" Required>
                 </div>
             </div>
             <div class="row mb-3">
                 <div class="col">
                     <!-- Add more fields as needed -->
-                    <input type="text" class="form-control form-control-lg" placeholder="Enter Xfortriggerprice_buy" name="xfortriggerprice_buy" >
+                    <input type="text" class="form-control form-control-lg" placeholder="Enter Xfortriggerprice_buy" name="xfortriggerprice_buy" Required>
                 </div>
                 <div class="col">
                     <!-- Add more fields as needed -->
-                    <input type="number" class="form-control form-control-lg" placeholder="Enter quantity" name="quantity" >
+                    <input type="number" class="form-control form-control-lg" placeholder="Enter quantity" name="quantity" Required>
                 </div>
             </div>
             <div class="row mb-3">
                 <div class="col">
                     <!-- Add more fields as needed -->
-                    <input type="text" class="form-control form-control-lg" placeholder="Enter Xforadd_up_sell" name="xfor_add_up_sell" >
+                    <input type="text" class="form-control form-control-lg" placeholder="Enter Xforadd_up_sell" name="xfor_add_up_sell" Required>
                 </div>
                 <div class="col">
-                    <input type="text" class="form-control form-control-lg" id="access" placeholder="Enter Xforsub_down_sell" name="xfor_sub_down_sell">
+                    <input type="text" class="form-control form-control-lg" id="access" placeholder="Enter Xforsub_down_sell" name="xfor_sub_down_sell" Required>
                 </div>
             <!-- Add more rows for additional fields -->
             <button type="submit" class="btn btn-primary btn-block">Submit</button> <!-- Add a submit button -->
