@@ -80,14 +80,18 @@
 </head>
 <body>
     <div class="container">
-        <button type="button" id="token_generator" name="token" value="token_generator"><a href="https://kite.zerodha.com/connect/login?api_key=4kphycxxs6nm7ukf">Token Generator</a></button>
+        <button type="button" id="token_generator" name="token" value="token_generator"><a href={{kite_api_link}}>Token Generator</a></button>
         <form action="/tradestock" method="post"> <!-- Add your action URL here -->
             <div class="row mb-3">
                 <div class="col">
                     <input type="text" class="form-control form-control-lg" placeholder="Enter Access Token" name="access_token" >
                 </div>
                 <div class="col">
-                    <input type="text" class="form-control form-control-lg" placeholder="Enter Index Name" name="index" >
+                    <input type="text" class="form-control form-control-lg" list="indexList" placeholder="Enter Index Name" name="index" >
+                    <datalist id="indexList">
+                        <option value="BANKNIFTY">
+                        <option value="NIFTY 50">
+                    </datalist>
                 </div>
             </div>
             <div class="row mb-3">
