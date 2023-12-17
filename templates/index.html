@@ -47,9 +47,6 @@
         #token_generator:hover {
         background-color: rgb(51, 51, 255);
         }
-        #token_generator:hover a {
-        color: white; /* Set the text color to white on hover */
-        }
         #access{
             margin-right:40px;
             margin-bottom:40px
@@ -87,39 +84,43 @@
         <form action="/tradestock" method="post"> <!-- Add your action URL here -->
             <div class="row mb-3">
                 <div class="col">
-                    <input type="text" class="form-control form-control-lg" placeholder="Enter Access Token" name="access_token" required>
+                    <input type="text" class="form-control form-control-lg" placeholder="Enter Access Token" name="access_token" >
                 </div>
                 <div class="col">
-                    <input type="text" class="form-control form-control-lg" placeholder="Enter Index Name" name="index" required>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col">
-                    <!-- Add more fields as needed -->
-                    <input type="number" class="form-control form-control-lg" placeholder="Enter Xforindex" name="xforindex" required>
-                </div>
-                <div class="col">
-                    <!-- Add more fields as needed -->
-                    <input type="number" class="form-control form-control-lg" placeholder="Enter Xforbuyprice" name="xforbuyprice" required>
+                    <input type="text" class="form-control form-control-lg" list="indexList" placeholder="Enter Index Name" name="index" >
+                    <datalist id="indexList">
+                        <option value="BANKNIFTY">
+                        <option value="NIFTY 50">
+                    </datalist>
                 </div>
             </div>
             <div class="row mb-3">
                 <div class="col">
                     <!-- Add more fields as needed -->
-                    <input type="text" class="form-control form-control-lg" placeholder="Enter Xfortriggerprice_buy" name="xfortriggerprice_buy" required>
+                    <input type="number" class="form-control form-control-lg" placeholder="Enter Xforindex" name="xforindex" >
                 </div>
                 <div class="col">
                     <!-- Add more fields as needed -->
-                    <input type="number" class="form-control form-control-lg" placeholder="Enter quantity" name="quantity" required>
+                    <input type="number" class="form-control form-control-lg" placeholder="Enter Xforbuyprice" name="xforbuyprice" >
                 </div>
             </div>
             <div class="row mb-3">
                 <div class="col">
                     <!-- Add more fields as needed -->
-                    <input type="text" class="form-control form-control-lg" placeholder="Enter Xforadd_up_sell" name="xforadd_up_sell" required>
+                    <input type="text" class="form-control form-control-lg" placeholder="Enter Xfortriggerprice_buy" name="xfortriggerprice_buy" >
                 </div>
                 <div class="col">
-                    <input type="text" class="form-control form-control-lg" id="access" placeholder="Enter Xforsub_down_sell" name="xforsub_down_sell" required>
+                    <!-- Add more fields as needed -->
+                    <input type="number" class="form-control form-control-lg" placeholder="Enter quantity" name="quantity" >
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col">
+                    <!-- Add more fields as needed -->
+                    <input type="text" class="form-control form-control-lg" placeholder="Enter Xforadd_up_sell" name="xfor_add_up_sell" >
+                </div>
+                <div class="col">
+                    <input type="text" class="form-control form-control-lg" id="access" placeholder="Enter Xforsub_down_sell" name="xfor_sub_down_sell">
                 </div>
             <!-- Add more rows for additional fields -->
             <button type="submit" class="btn btn-primary btn-block">Submit</button> <!-- Add a submit button -->

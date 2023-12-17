@@ -1,8 +1,7 @@
-from flask import session
+from flask import session,json
 import kiteconnect
 from datetime import datetime,time,timedelta
 import time as sleep_time
-
 
 # Replace these values with your API credentials
 api_key = "4kphycxxs6nm7ukf"
@@ -41,7 +40,7 @@ def get_index_info(indexname,access_token):
         index_open =  index_historical_data[0]["open"]
         return index_open
     except Exception as e:
-        return str(e)
+        return json.dumps({"Error in get_index_info":str(e)}),500
     
 def get_strike_lowprice(indexname,strikeprice,option,access_token):
     try:
@@ -64,7 +63,7 @@ def get_strike_lowprice(indexname,strikeprice,option,access_token):
         today = get_today_date()
         year, month, day = today.split(",")
         from_date_ts = datetime(int(year),int(month),int(day),10,0,0)
-        to_date_ts = datetime(int(year),int(month),int(day),10,5,0)
+        to_date_ts = datetime(int(year),int(month),int(day),10,4,0)
 
         if indexname == "NIFTY 50":
             filtered_tradingsymbol = []
@@ -90,7 +89,7 @@ def get_strike_lowprice(indexname,strikeprice,option,access_token):
         roundfig_low_value_option = round(low_value_option)
         return [roundfig_low_value_option,get_tradingsymbol]
     except Exception as e:
-        return str(e)   
+        return json.dumps({"Error in get_strike_lowprice":str(e)}),500   
         
 def buy_stock(items_to_buy,access_token):
     try:
@@ -112,10 +111,11 @@ def buy_stock(items_to_buy,access_token):
             triggered_data.append(order_id)
         return triggered_data
     except Exception as e:
-        return str(e) 
+        return json.dumps({"Error in buy_stock":str(e)}),500
     
 # Function to check order status
 def check_order_status(order_id,access_token):
+    try:
         kite = kiteconnect.KiteConnect(api_key, access_token)
         order_details = kite.order_history(order_id=order_id)
         for item in order_details:
@@ -123,25 +123,33 @@ def check_order_status(order_id,access_token):
             if status in ["COMPLETE", "REJECTED", "CANCELLED","TRIGGER PENDING"]:
                 statuss = item      
         return statuss
-    
+    except Exception as e:
+        return json.dumps({"Error in check_order_status":str(e)}),500
+  
 # Function to cancel another order (SELL) for a specific order ID
 def cancel_other_order(order_id,access_token):
-    kite = kiteconnect.KiteConnect(api_key, access_token)
-    order_variety = "regular"
-    existing_order_status = check_order_status(order_id,access_token)
-    if existing_order_status['status'] == "TRIGGER PENDING":
-        kite.cancel_order(variety=order_variety,order_id=order_id)  
-    
+    try:
+        kite = kiteconnect.KiteConnect(api_key, access_token)
+        order_variety = "regular"
+        existing_order_status = check_order_status(order_id,access_token)
+        if existing_order_status['status'] == "TRIGGER PENDING":
+            kite.cancel_order(variety=order_variety,order_id=order_id) 
+    except Exception as e:
+        return json.dumps({"Error in cancel_other_order":str(e)}),500
+     
 #List to store order statuses
 def check_status(order_ids,access_token):
-    for order_id in order_ids:
-        order_status_details = check_order_status(order_id,access_token)
-        if order_status_details['status'] == "COMPLETE":
-            order_status_complete = order_status_details
-            #Order successfully bought, now cancel the other order
-            other_order_id = next(id for id in order_ids if id != order_status_details["order_id"])
-            cancel_other_order(other_order_id,access_token) 
-            return order_status_complete
+    try:
+        for order_id in order_ids:
+            order_status_details = check_order_status(order_id,access_token)
+            if order_status_details['status'] == "COMPLETE":
+                order_status_complete = order_status_details
+                #Order successfully bought, now cancel the other order
+                other_order_id = next(id for id in order_ids if id != order_status_details["order_id"])
+                cancel_other_order(other_order_id,access_token) 
+                return order_status_complete
+    except Exception as e:
+        return json.dumps({"Error in check_status":str(e)}),500
             
 def check_and_cancel_order(order_ids,access_token):
     try:
@@ -153,13 +161,16 @@ def check_and_cancel_order(order_ids,access_token):
             sleep_time.sleep(10)
         return order_status_complete_data
     except Exception as e:
-        return str(e) 
+        return json.dumps({"Error in check_and_cancel_order":str(e)}),500
 
 def get_live_stock_price(symbol,access_token):
-    kite = kiteconnect.KiteConnect(api_key, access_token)
-    quote = kite.ltp("NSE:" + symbol)
-    return quote["NSE:" + symbol]["last_price"]
-    
+    try:
+        kite = kiteconnect.KiteConnect(api_key, access_token)
+        quote = kite.ltp("NSE:" + symbol)
+        return quote["NSE:" + symbol]["last_price"]
+    except Exception as e:
+        return json.dumps({"Error in get_live_stock_price":str(e)}),500
+  
 def place_sell_order(tradingsymbol,quantity,access_token):
     kite = kiteconnect.KiteConnect(api_key, access_token)
     data_sell = []  
@@ -175,7 +186,7 @@ def place_sell_order(tradingsymbol,quantity,access_token):
         data_sell.append(order_id)
         return data_sell
     except Exception as e:
-        return str(e) 
+        return json.dumps({"Error in place_sell_order":str(e)}),500
 
 def orderlist_check_placesell(average_price,tradingsymbol,quantity,dynamic_xfor_add_up_sell,dynamic_xfor_sub_down_sell,access_token):
     try:
@@ -200,4 +211,4 @@ def orderlist_check_placesell(average_price,tradingsymbol,quantity,dynamic_xfor_
             sleep_time.sleep(10)
         return sell_order_id
     except Exception as e:
-        return str(e) 
+        return json.dumps({"Error in orderlist_check_placesell":str(e)}),500 
