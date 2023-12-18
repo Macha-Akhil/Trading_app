@@ -86,4 +86,4 @@ def main():
         return json.dumps({"Error in main_app.py":str(e)}),500
 
 if __name__ == '__main__':
-     app.run(port=5001,debug=True)
+     app.run(debug=True)
