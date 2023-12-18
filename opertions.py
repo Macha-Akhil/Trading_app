@@ -166,8 +166,8 @@ def check_and_cancel_order(order_ids,access_token):
 def get_live_stock_price(symbol,access_token):
     try:
         kite = kiteconnect.KiteConnect(api_key, access_token)
-        quote = kite.ltp("NSE:" + symbol)
-        return quote["NSE:" + symbol]["last_price"]
+        quote = kite.ltp("NFO:" + symbol)
+        return quote["NFO:" + symbol]["last_price"]
     except Exception as e:
         return json.dumps({"Error in get_live_stock_price":str(e)}),500
   
@@ -175,12 +175,12 @@ def place_sell_order(tradingsymbol,quantity,access_token):
     kite = kiteconnect.KiteConnect(api_key, access_token)
     data_sell = []  
     try:
-        order_id = kite.place_order(transaction_type=kite.TRANSACTION_TYPE_BUY,
+        order_id = kite.place_order(transaction_type=kite.TRANSACTION_TYPE_SELL,
                                     tradingsymbol=tradingsymbol,
-                                    exchange=kite.EXCHANGE_NSE,
+                                    exchange=kite.EXCHANGE_NFO,
                                     quantity=quantity,
                                     variety=kite.VARIETY_REGULAR,
-                                    order_type=kite.ORDER_TYPE_MARKET,
+                                    order_type=kite.ORDER_TYPE_LIMIT,
                                     product=kite.PRODUCT_MIS,
                                     validity=kite.VALIDITY_DAY)
         data_sell.append(order_id)
