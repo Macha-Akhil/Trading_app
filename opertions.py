@@ -158,7 +158,7 @@ def check_and_cancel_order(order_ids,access_token):
             if order_status is not None:
                 order_status_complete_data = order_status
                 break
-            sleep_time.sleep(10)
+            sleep_time.sleep(2)
         return order_status_complete_data
     except Exception as e:
         return json.dumps({"Error in check_and_cancel_order":str(e)}),500
@@ -180,7 +180,7 @@ def place_sell_order(tradingsymbol,quantity,access_token):
                                     exchange=kite.EXCHANGE_NFO,
                                     quantity=quantity,
                                     variety=kite.VARIETY_REGULAR,
-                                    order_type=kite.ORDER_TYPE_LIMIT,
+                                    order_type=kite.ORDER_TYPE_MARKET,
                                     product=kite.PRODUCT_MIS,
                                     validity=kite.VALIDITY_DAY)
         data_sell.append(order_id)
@@ -208,7 +208,7 @@ def orderlist_check_placesell(average_price,tradingsymbol,quantity,dynamic_xfor_
                 sell_order_id = place_sell_order(tradingsymbol,quantity,access_token)
                 sell_triggered = True
                 break
-            sleep_time.sleep(10)
+            sleep_time.sleep(1)
         return sell_order_id
     except Exception as e:
         return json.dumps({"Error in orderlist_check_placesell":str(e)}),500 
