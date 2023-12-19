@@ -208,7 +208,7 @@ def orderlist_check_placesell(average_price,tradingsymbol,quantity,dynamic_xfor_
                 sell_order_id = place_sell_order(tradingsymbol,quantity,access_token)
                 sell_triggered = True
                 break
-            sleep_time.sleep(1)
+            sleep_time.sleep(2)
         return sell_order_id
     except Exception as e:
         return json.dumps({"Error in orderlist_check_placesell":str(e)}),500 
