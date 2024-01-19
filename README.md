@@ -1,4 +1,4 @@
-# Trading_app
+# Trading_app ( kite.zerodha.com )
 
 ![Trading-Form](https://github.com/Macha-Akhil/Trading_app/assets/118301122/361132d7-94a8-46fd-ae03-8baef5127243)
 
@@ -10,7 +10,7 @@
 
 ![project4](https://github.com/Macha-Akhil/Trading_app/assets/118301122/ad2d6ec6-f54e-45be-8229-58aee3ad9dc9)
 
-#Full_Project_Description
+# Full_Project_Description
 
 ![fullproject](https://github.com/Macha-Akhil/Trading_app/assets/118301122/febb16cb-e566-4294-bf41-db6f7bcdfd37)
 
