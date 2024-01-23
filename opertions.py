@@ -4,8 +4,7 @@ from datetime import datetime,time,timedelta
 import time as sleep_time
 
 # Replace these values with your API credentials
-api_key = "4kphycxxs6nm7ukf"
-# Create a Kite Connect API client
+api_key = "kra4acx0471qmwqt"
 
 def get_today_date():
         today_date = datetime.now().date()

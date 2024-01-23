@@ -6,13 +6,15 @@ from opertions import get_index_info,get_strike_lowprice,buy_stock,check_and_can
 #log details
 logging.basicConfig(level=logging.DEBUG)
 #kite instance
-kite_api_key = "4kphycxxs6nm7ukf"
-kite_api_secret = "4ucdchle2rn2of6r0vgsh0o15v2sm6kn"
-kite_api_link = "https://kite.zerodha.com/connect/login?api_key=4kphycxxs6nm7ukf"
+kite_api_key = "kra4acx0471qmwqt"
+kite_api_secret = "mv9l1urbqh6rglrjcbv17e70v7hopf4t"
+kite_api_link = "https://kite.zerodha.com/connect/login?api_key=kra4acx0471qmwqt"
 kite = KiteConnect(kite_api_key)
 #register app
 app = Flask(__name__,template_folder='templates',static_folder='static')
 app.secret_key = os.urandom(24)
+app.config['TIMEOUT'] = 2
+
 def get_kite_client():
     kite = KiteConnect(api_key=kite_api_key)
     if "access_token" in session:
@@ -86,4 +88,4 @@ def main():
         return json.dumps({"Error in main_app.py":str(e)}),500
 
 if __name__ == '__main__':
-     app.run(debug=True)
+     app.run(port=5001,debug=True)
