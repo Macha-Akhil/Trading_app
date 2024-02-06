@@ -6,8 +6,8 @@ from opertions import get_index_info,get_strike_lowprice,buy_stock,check_and_can
 #log details
 logging.basicConfig(level=logging.DEBUG)
 #kite instance
-kite_api_key = "kra4acx0471qmwqt"
-kite_api_secret = "mv9l1urbqh6rglrjcbv17e70v7hopf4t"
+kite_api_key = "kra4acx0471qmwqt" #kra4acx0471qmwqt
+kite_api_secret = "mv9l1urbqh6rglrjcbv17e70v7hopf4t" #mv9l1urbqh6rglrjcbv17e70v7hopf4t
 kite_api_link = "https://kite.zerodha.com/connect/login?api_key=kra4acx0471qmwqt"
 kite = KiteConnect(kite_api_key)
 #register app
@@ -77,6 +77,7 @@ def main():
         pe_strike_lp.extend([dynamic_xforbuy,dynamic_xfortriggerprice_buy,dynamic_quantity])
         #return [ce_strike_lp,pe_strike_lp]
         items_to_buy = [ce_strike_lp,pe_strike_lp]
+        #return items_to_buy
         triggered_buy_data_ids = buy_stock(items_to_buy,access_token)
         #return triggered_buy_data_ids
         complete_order_dict = check_and_cancel_order(triggered_buy_data_ids,access_token)
@@ -85,7 +86,9 @@ def main():
         return sell_order_id
         
     except Exception as e:
-        return json.dumps({"Error in main_app.py":str(e)}),500
+        logging.error(f"Error in /tradestock: {str(e)}")
+        # Return an error response
+        return jsonify({"status": "error", "message": "Internal Server Error"}), 500
 
 if __name__ == '__main__':
      app.run(port=5001,debug=True)

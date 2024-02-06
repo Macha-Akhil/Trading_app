@@ -16,8 +16,22 @@ def get_today_date_tdngsymbl():
         formatted_expiry = today_date.strftime("%a, %d %b %Y %H:%M:%S GMT")
         return formatted_expiry
 
+#function -- before 10am submitting the request with required data
+def wait_until_market_open(target_time):
+    current_time = datetime.now().time()
+    while True:
+        if current_time >= target_time:
+            break
+        sleep_time.sleep(20) 
+        #print("hello world")  
+        current_time = datetime.now().time()
+
 def get_index_info(indexname,access_token):
     try :
+        #calling the function before the time to submit
+        target_time = time(10,1)
+        wait_until_market_open(target_time)
+
         kite = kiteconnect.KiteConnect(api_key, access_token)
         if indexname == "NIFTY 50":
             index = "NSE:NIFTY 50"
@@ -43,6 +57,10 @@ def get_index_info(indexname,access_token):
     
 def get_strike_lowprice(indexname,strikeprice,option,access_token):
     try:
+        #calling the function before the time to submit
+        target_time = time(10,4)
+        wait_until_market_open(target_time)
+
         kite = kiteconnect.KiteConnect(api_key, access_token)
         instruments = kite.instruments()
         today_expiry_date_str = get_today_date_tdngsymbl()
@@ -53,7 +71,6 @@ def get_strike_lowprice(indexname,strikeprice,option,access_token):
             days_to_add = (3 - weekday) % 7
         elif indexname == "BANKNIFTY":
             days_to_add = (2 - weekday) % 7
-
         # Calculate the nearest weekday date
         nearest_weekday = today_expiry_date + timedelta(days=days_to_add)
         # Format the nearest weekday date as a string
@@ -61,8 +78,8 @@ def get_strike_lowprice(indexname,strikeprice,option,access_token):
         option_interval = "minute"
         today = get_today_date()
         year, month, day = today.split(",")
-        from_date_ts = datetime(int(year),int(month),int(day),10,0,0)
-        to_date_ts = datetime(int(year),int(month),int(day),10,4,0)
+        from_date_ts = datetime(int(year),int(month),int(day),10,4,0)
+        to_date_ts = datetime(int(year),int(month),int(day),10,5,0)
 
         if indexname == "NIFTY 50":
             filtered_tradingsymbol = []
@@ -87,6 +104,7 @@ def get_strike_lowprice(indexname,strikeprice,option,access_token):
         low_value_option = min_low_entry_option["low"]
         roundfig_low_value_option = round(low_value_option)
         return [roundfig_low_value_option,get_tradingsymbol]
+        #return index_historical_data_option
     except Exception as e:
         return json.dumps({"Error in get_strike_lowprice":str(e)}),500   
         
@@ -195,8 +213,16 @@ def orderlist_check_placesell(average_price,tradingsymbol,quantity,dynamic_xfor_
         sell_time_str = "15:15"
         sell_time = time(*map(int, sell_time_str.split(':')))
         sell_triggered = False
+        sell_decreased_to = 10
+        sell_decreased_value = sell_for_up - sell_decreased_to
         while True:
             live_price = get_live_stock_price(tradingsymbol,access_token)
+
+            #sell_for_up is 130 if live price is 122 then sell_for_down should changes to 0.0
+            if live_price >= sell_decreased_value:
+                dynamic_xfor_sub_down_sell = 0.0
+                sell_for_down = average_price - float(dynamic_xfor_sub_down_sell)
+                #print("sell for down is 0.0")
             # Check if the graph goes up or goes down and trigger sell
             if live_price >= sell_for_up or live_price <= sell_for_down:
                 sell_order_id = place_sell_order(tradingsymbol,quantity,access_token)
@@ -207,7 +233,7 @@ def orderlist_check_placesell(average_price,tradingsymbol,quantity,dynamic_xfor_
                 sell_order_id = place_sell_order(tradingsymbol,quantity,access_token)
                 sell_triggered = True
                 break
-            sleep_time.sleep(2)
+            sleep_time.sleep(1)
         return sell_order_id
     except Exception as e:
         return json.dumps({"Error in orderlist_check_placesell":str(e)}),500 
