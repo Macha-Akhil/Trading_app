@@ -86,9 +86,7 @@ def main():
         return sell_order_id
         
     except Exception as e:
-        logging.error(f"Error in /tradestock: {str(e)}")
-        # Return an error response
-        return jsonify({"status": "error", "message": "Internal Server Error"}), 500
+        return json.dumps({"Error in app.py tradestock":str(e)}),500
 
 if __name__ == '__main__':
      app.run(port=5001,debug=True)

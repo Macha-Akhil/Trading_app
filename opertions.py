@@ -78,7 +78,7 @@ def get_strike_lowprice(indexname,strikeprice,option,access_token):
         option_interval = "minute"
         today = get_today_date()
         year, month, day = today.split(",")
-        from_date_ts = datetime(int(year),int(month),int(day),10,4,0)
+        from_date_ts = datetime(int(year),int(month),int(day),10,1,0)
         to_date_ts = datetime(int(year),int(month),int(day),10,5,0)
 
         if indexname == "NIFTY 50":
@@ -222,7 +222,7 @@ def orderlist_check_placesell(average_price,tradingsymbol,quantity,dynamic_xfor_
             if live_price >= sell_decreased_value:
                 dynamic_xfor_sub_down_sell = 0.0
                 sell_for_down = average_price - float(dynamic_xfor_sub_down_sell)
-                #print("sell for down is 0.0")
+                print("sell for down is 0.0")
             # Check if the graph goes up or goes down and trigger sell
             if live_price >= sell_for_up or live_price <= sell_for_down:
                 sell_order_id = place_sell_order(tradingsymbol,quantity,access_token)
