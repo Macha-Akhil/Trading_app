@@ -67,8 +67,6 @@ def main():
         #return str(rounded_openindex)
         ce_strike = str(int(rounded_openindex) - int(dynamic_xforindex))
         pe_strike = str(int(rounded_openindex) + int(dynamic_xforindex))
-        #response_data = {'ce_strike': ce_strike,'pe_strike': pe_strike}
-        #return jsonify(response_data)
         #return [ce_strike,pe_strike]
         ce_strike_lp = get_strike_lowprice(dynamic_index,ce_strike,"CE",access_token)
         pe_strike_lp = get_strike_lowprice(dynamic_index,pe_strike,"PE",access_token)
