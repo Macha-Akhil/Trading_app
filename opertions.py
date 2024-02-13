@@ -26,10 +26,16 @@ def wait_until_market_open(target_time):
         #print("hello world")  
         current_time = datetime.now().time()
 
-def get_index_info(indexname,access_token):
+def get_index_info(indextime,indexname,access_token):
     try :
+        if indextime == 10:
+            indextime = 10
+        elif indextime == 13:
+            indextime = 13
+        else:
+            raise ValueError("We don't support other than 10AM & 1PM (13) time")
         #calling the function before the time to submit
-        target_time = time(10,1)
+        target_time = time(indextime,1)
         wait_until_market_open(target_time)
 
         kite = kiteconnect.KiteConnect(api_key, access_token)
@@ -46,8 +52,8 @@ def get_index_info(indexname,access_token):
         today = get_today_date()
         year, month, day = today.split(",")
         # Create a datetime object representing the time at which you want to get the NIFTY 50 or BANKNIFTY index open price
-        from_date_time = datetime(int(year),int(month),int(day),10,0,0)
-        to_date_time = datetime(int(year),int(month),int(day),10,1,0)
+        from_date_time = datetime(int(year),int(month),int(day),indextime,0,0)
+        to_date_time = datetime(int(year),int(month),int(day),indextime,1,0)
         # Get the historical data for the NIFTY BANK or nifty 50 index
         index_historical_data = kite.historical_data(instrument_token=index_instrument_token,from_date=from_date_time,to_date=to_date_time,interval=index_interval)
         index_open =  index_historical_data[0]["open"]
@@ -55,10 +61,16 @@ def get_index_info(indexname,access_token):
     except Exception as e:
         return json.dumps({"Error in get_index_info":str(e)}),500
     
-def get_strike_lowprice(indexname,strikeprice,option,access_token):
+def get_strike_lowprice(indextime,indexname,strikeprice,option,access_token):
     try:
+        if indextime == 10:
+            indextime = 10
+        elif indextime == 13:
+            indextime = 13
+        else:
+            raise ValueError("We don't support other than 10AM & 1PM (13) time")
         #calling the function before the time to submit
-        target_time = time(10,4)
+        target_time = time(indextime,5)
         wait_until_market_open(target_time)
 
         kite = kiteconnect.KiteConnect(api_key, access_token)
@@ -78,8 +90,8 @@ def get_strike_lowprice(indexname,strikeprice,option,access_token):
         option_interval = "minute"
         today = get_today_date()
         year, month, day = today.split(",")
-        from_date_ts = datetime(int(year),int(month),int(day),10,1,0)
-        to_date_ts = datetime(int(year),int(month),int(day),10,5,0)
+        from_date_ts = datetime(int(year),int(month),int(day),indextime,1,0)
+        to_date_ts = datetime(int(year),int(month),int(day),indextime,6,0)
 
         if indexname == "NIFTY 50":
             filtered_tradingsymbol = []
@@ -112,20 +124,30 @@ def buy_stock(items_to_buy,access_token):
     try:
         kite = kiteconnect.KiteConnect(api_key, access_token)
         triggered_data=[]
+        orders_to_cancel = [] 
         for item in items_to_buy:
             buy_price = int(item[0]) + float(item[2])
             trigger_price = buy_price - float(item[3])
-            order_id = kite.place_order(transaction_type=kite.TRANSACTION_TYPE_BUY,
-                                    tradingsymbol=item[1],
-                                    exchange=kite.EXCHANGE_NFO,
-                                    quantity=int(item[4]),
-                                    variety=kite.VARIETY_REGULAR,
-                                    order_type=kite.ORDER_TYPE_SL,
-                                    product=kite.PRODUCT_MIS,
-                                    price=buy_price,
-                                    trigger_price=trigger_price,
-                                    validity=kite.VALIDITY_DAY)
-            triggered_data.append(order_id)
+            try:
+                order_id = kite.place_order(transaction_type=kite.TRANSACTION_TYPE_BUY,
+                                        tradingsymbol=item[1],
+                                        exchange=kite.EXCHANGE_NFO,
+                                        quantity=int(item[4]),
+                                        variety=kite.VARIETY_REGULAR,
+                                        order_type=kite.ORDER_TYPE_SL,
+                                        product=kite.PRODUCT_MIS,
+                                        price=buy_price,
+                                        trigger_price=trigger_price,
+                                        validity=kite.VALIDITY_DAY)
+                triggered_data.append(order_id)
+                orders_to_cancel.append(order_id)
+            except Exception as e:
+                print(f"Error placing order for tradingsymbol: {item[1]} - {e}")
+                for order_to_cancel in orders_to_cancel:
+                    order_variety = "regular"
+                    kite.cancel_order(variety=order_variety,order_id=order_to_cancel)
+                return json.dumps({"Error in second buy_stock_": str(e)}), 500
+        orders_to_cancel.clear()
         return triggered_data
     except Exception as e:
         return json.dumps({"Error in buy_stock":str(e)}),500

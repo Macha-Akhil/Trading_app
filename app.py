@@ -54,8 +54,10 @@ def main():
             dynamic_quantity = request.form.get('quantity')
             dynamic_xfor_add_up_sell = request.form.get('xfor_add_up_sell')
             dynamic_xfor_sub_down_sell = request.form.get('xfor_sub_down_sell')
+            dynamic_time = request.form.get('xfortime')
 
-        get_index = get_index_info(dynamic_index,access_token)
+        dynamic_time_int = int(dynamic_time)
+        get_index = get_index_info(dynamic_time_int,dynamic_index,access_token)
         #return str(get_index)
         if not isinstance(get_index, (int, float, complex)):
             raise ValueError(get_index)
@@ -68,8 +70,8 @@ def main():
         ce_strike = str(int(rounded_openindex) - int(dynamic_xforindex))
         pe_strike = str(int(rounded_openindex) + int(dynamic_xforindex))
         #return [ce_strike,pe_strike]
-        ce_strike_lp = get_strike_lowprice(dynamic_index,ce_strike,"CE",access_token)
-        pe_strike_lp = get_strike_lowprice(dynamic_index,pe_strike,"PE",access_token)
+        pe_strike_lp = get_strike_lowprice(dynamic_time_int,dynamic_index,pe_strike,"PE",access_token)
+        ce_strike_lp = get_strike_lowprice(dynamic_time_int,dynamic_index,ce_strike,"CE",access_token)
         #return [ce_strike_lp,pe_strike_lp]
         ce_strike_lp.extend([dynamic_xforbuy,dynamic_xfortriggerprice_buy,dynamic_quantity])
         pe_strike_lp.extend([dynamic_xforbuy,dynamic_xfortriggerprice_buy,dynamic_quantity])
