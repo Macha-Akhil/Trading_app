@@ -78,7 +78,7 @@ def main():
         #return [ce_strike_lp,pe_strike_lp]
         items_to_buy = [ce_strike_lp,pe_strike_lp]
         #return items_to_buy
-        triggered_buy_data_ids = buy_stock(items_to_buy,access_token)
+        triggered_buy_data_ids = buy_stock(dynamic_time_int,items_to_buy,access_token)
         #return triggered_buy_data_ids
         complete_order_dict = check_and_cancel_order(triggered_buy_data_ids,access_token)
         #return complete_order_dict

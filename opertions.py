@@ -22,7 +22,7 @@ def wait_until_market_open(target_time):
     while True:
         if current_time >= target_time:
             break
-        sleep_time.sleep(20) 
+        sleep_time.sleep(5) 
         #print("hello world")  
         current_time = datetime.now().time()
 
@@ -33,7 +33,7 @@ def get_index_info(indextime,indexname,access_token):
         elif indextime == 13:
             indextime = 13
         else:
-            raise ValueError("We don't support other than 10AM & 1PM (13) time")
+            raise ValueError("get_index_info : We don't support other than 10AM & 1PM (13) time")
         #calling the function before the time to submit
         target_time = time(indextime,1)
         wait_until_market_open(target_time)
@@ -68,9 +68,9 @@ def get_strike_lowprice(indextime,indexname,strikeprice,option,access_token):
         elif indextime == 13:
             indextime = 13
         else:
-            raise ValueError("We don't support other than 10AM & 1PM (13) time")
+            raise ValueError("get_strike_lowprice : We don't support other than 10AM & 1PM (13) time")
         #calling the function before the time to submit
-        target_time = time(indextime,5)
+        target_time = time(indextime,4)
         wait_until_market_open(target_time)
 
         kite = kiteconnect.KiteConnect(api_key, access_token)
@@ -90,8 +90,8 @@ def get_strike_lowprice(indextime,indexname,strikeprice,option,access_token):
         option_interval = "minute"
         today = get_today_date()
         year, month, day = today.split(",")
-        from_date_ts = datetime(int(year),int(month),int(day),indextime,1,0)
-        to_date_ts = datetime(int(year),int(month),int(day),indextime,6,0)
+        from_date_ts = datetime(int(year),int(month),int(day),indextime,0,0)
+        to_date_ts = datetime(int(year),int(month),int(day),indextime,5,0)
 
         if indexname == "NIFTY 50":
             filtered_tradingsymbol = []
@@ -120,8 +120,16 @@ def get_strike_lowprice(indextime,indexname,strikeprice,option,access_token):
     except Exception as e:
         return json.dumps({"Error in get_strike_lowprice":str(e)}),500   
         
-def buy_stock(items_to_buy,access_token):
+def buy_stock(indextime,items_to_buy,access_token):
     try:
+        if indextime == 10:
+            indextime = 10
+        elif indextime == 13:
+            indextime = 13
+        else:
+            raise ValueError("buy_stock : We don't support other than 10AM & 1PM (13) time")
+        target_time = time(indextime,5)
+        wait_until_market_open(target_time)
         kite = kiteconnect.KiteConnect(api_key, access_token)
         triggered_data=[]
         orders_to_cancel = [] 
