@@ -61,11 +61,11 @@ def main():
         roundfig_openindex = round(get_index)
         if dynamic_index == "NIFTY 50":
             rounded_openindex = round(roundfig_openindex // 50 ) * 50
-            if get_index % 50 >= 25:
+            if roundfig_openindex % 50 >= 25:
                 rounded_openindex += 50
         elif dynamic_index == 'BANKNIFTY':
             rounded_openindex = round(roundfig_openindex // 100 ) * 100
-            if get_index % 100 >= 50:
+            if roundfig_openindex % 100 >= 50:
                 rounded_openindex += 100
         #return str(rounded_openindex)
         ce_strike = str(int(rounded_openindex) - int(dynamic_xforindex))
