@@ -2,20 +2,16 @@ from flask import session,json
 import kiteconnect
 from datetime import datetime,time,timedelta
 import time as sleep_time
-
 # Replace these values with your API credentials
 api_key = "kra4acx0471qmwqt"
-
 def get_today_date():
         today_date = datetime.now().date()
         formatted_today_year = today_date.strftime("%Y,%#m,%#d")
         return formatted_today_year
-
 def get_today_date_tdngsymbl():
         today_date = datetime.now().date()
         formatted_expiry = today_date.strftime("%a, %d %b %Y %H:%M:%S GMT")
         return formatted_expiry
-
 #function -- before 10am submitting the request with required data
 def wait_until_market_open(target_time):
     current_time = datetime.now().time()
@@ -25,7 +21,8 @@ def wait_until_market_open(target_time):
         sleep_time.sleep(5) 
         #print("hello world")  
         current_time = datetime.now().time()
-
+# STEP - 1
+# Morning 10Am or 1pm  NIFTY 50 or BANKNIFTY Index value
 def get_index_info(indextime,indexname,access_token):
     try :
         if indextime == 10:
@@ -37,7 +34,6 @@ def get_index_info(indextime,indexname,access_token):
         #calling the function before the time to submit
         target_time = time(indextime,1)
         wait_until_market_open(target_time)
-
         kite = kiteconnect.KiteConnect(api_key, access_token)
         if indexname == "NIFTY 50":
             index = "NSE:NIFTY 50"
@@ -60,7 +56,8 @@ def get_index_info(indextime,indexname,access_token):
         return index_open
     except Exception as e:
         return json.dumps({"Error in get_index_info":str(e)}),500
-    
+# STEP - 2
+# Morning 10:01 - 10:04 min of low value of ( NIFTY 50 or BANKNIFTY ) CE AND PE values  
 def get_strike_lowprice(indextime,indexname,strikeprice,option,access_token):
     try:
         if indextime == 10:
@@ -72,13 +69,11 @@ def get_strike_lowprice(indextime,indexname,strikeprice,option,access_token):
         #calling the function before the time to submit
         target_time = time(indextime,4)
         wait_until_market_open(target_time)
-
         kite = kiteconnect.KiteConnect(api_key, access_token)
         instruments = kite.instruments()
         today_expiry_date_str = get_today_date_tdngsymbl()
         today_expiry_date = datetime.strptime(today_expiry_date_str, "%a, %d %b %Y %H:%M:%S GMT")
         weekday = today_expiry_date.weekday()
-
         if indexname == "NIFTY 50":
             days_to_add = (3 - weekday) % 7
         elif indexname == "BANKNIFTY":
@@ -92,7 +87,6 @@ def get_strike_lowprice(indextime,indexname,strikeprice,option,access_token):
         year, month, day = today.split(",")
         from_date_ts = datetime(int(year),int(month),int(day),indextime,0,0)
         to_date_ts = datetime(int(year),int(month),int(day),indextime,5,0)
-
         if indexname == "NIFTY 50":
             filtered_tradingsymbol = []
             for instrument in instruments:
@@ -115,11 +109,13 @@ def get_strike_lowprice(indextime,indexname,strikeprice,option,access_token):
         min_low_entry_option = min(index_historical_data_option, key=lambda x: x["low"])
         low_value_option = min_low_entry_option["low"]
         roundfig_low_value_option = round(low_value_option)
-        return [roundfig_low_value_option,get_tradingsymbol]
+        return [low_value_option,get_tradingsymbol]
+        #return [roundfig_low_value_option,get_tradingsymbol]
         #return index_historical_data_option
     except Exception as e:
         return json.dumps({"Error in get_strike_lowprice":str(e)}),500   
-        
+# STEP - 3
+# Trigger the CE AND PE values for buy        
 def buy_stock(indextime,items_to_buy,access_token):
     try:
         if indextime == 10:
@@ -159,7 +155,8 @@ def buy_stock(indextime,items_to_buy,access_token):
         return triggered_data
     except Exception as e:
         return json.dumps({"Error in buy_stock":str(e)}),500
-    
+# STEP - 4 (SUB)
+# If one stock ce or pe buy than other ce or pe get cancelled ( Below 4 functions for that:)   
 # Function to check order status
 def check_order_status(order_id,access_token):
     try:
@@ -172,7 +169,7 @@ def check_order_status(order_id,access_token):
         return statuss
     except Exception as e:
         return json.dumps({"Error in check_order_status":str(e)}),500
-  
+# STEP - 4 (SUB)
 # Function to cancel another order (SELL) for a specific order ID
 def cancel_other_order(order_id,access_token):
     try:
@@ -183,7 +180,7 @@ def cancel_other_order(order_id,access_token):
             kite.cancel_order(variety=order_variety,order_id=order_id) 
     except Exception as e:
         return json.dumps({"Error in cancel_other_order":str(e)}),500
-     
+# STEP - 4 (SUB)
 #List to store order statuses
 def check_status(order_ids,access_token):
     try:
@@ -197,7 +194,7 @@ def check_status(order_ids,access_token):
                 return order_status_complete
     except Exception as e:
         return json.dumps({"Error in check_status":str(e)}),500
-            
+# STEP - 4         
 def check_and_cancel_order(order_ids,access_token):
     try:
         while True:
@@ -209,7 +206,8 @@ def check_and_cancel_order(order_ids,access_token):
         return order_status_complete_data
     except Exception as e:
         return json.dumps({"Error in check_and_cancel_order":str(e)}),500
-
+# STEP - 5 (SUB)    
+# Sell the stock using details fetch live data (LTPDATA) and sell for up if graph goes up or sell for down if graph goes down  ( 3 functions used )
 def get_live_stock_price(symbol,access_token):
     try:
         kite = kiteconnect.KiteConnect(api_key, access_token)
@@ -217,7 +215,8 @@ def get_live_stock_price(symbol,access_token):
         return quote["NFO:" + symbol]["last_price"]
     except Exception as e:
         return json.dumps({"Error in get_live_stock_price":str(e)}),500
-  
+# STEP - 5 (SUB)
+# Sell the order 
 def place_sell_order(tradingsymbol,quantity,access_token):
     kite = kiteconnect.KiteConnect(api_key, access_token)
     data_sell = []  
@@ -234,7 +233,8 @@ def place_sell_order(tradingsymbol,quantity,access_token):
         return data_sell
     except Exception as e:
         return json.dumps({"Error in place_sell_order":str(e)}),500
-
+# STEP - 5 
+# Check sell the order graph is up or down 
 def orderlist_check_placesell(average_price,tradingsymbol,quantity,dynamic_xfor_add_up_sell,dynamic_xfor_sub_down_sell,access_token):
     try:
         #kite = kiteconnect.KiteConnect(api_key, access_token)
@@ -247,7 +247,6 @@ def orderlist_check_placesell(average_price,tradingsymbol,quantity,dynamic_xfor_
         sell_decreased_value = sell_for_up - sell_decreased_to
         while True:
             live_price = get_live_stock_price(tradingsymbol,access_token)
-
             #sell_for_up is 130 if live price is 122 then sell_for_down should changes to 0.0
             if live_price >= sell_decreased_value:
                 dynamic_xfor_sub_down_sell = 0.0
