@@ -203,7 +203,6 @@ def check_status(order_ids,access_token):
 #@retry(wait_fixed=2000)      
 def check_and_cancel_order(order_ids,access_token):
     try:
-        current_time = datetime.now().time()
         trigger_orders_cancel_time_str = "15:15"
         trigger_orders_cancel_time = time(*map(int, trigger_orders_cancel_time_str.split(':')))
         while True:
@@ -211,7 +210,8 @@ def check_and_cancel_order(order_ids,access_token):
             if order_status is not None:
                 order_status_complete_data = order_status
                 break
-            elif current_time >= trigger_orders_cancel_time:
+            current_time = datetime.now().time()
+            if current_time >= trigger_orders_cancel_time:
                 for order_info in order_ids:
                     cancel_other_order(order_info,access_token)
                 return("Triggered orders are not buyed so At 3:15pm orders are cancelled.")
@@ -277,7 +277,7 @@ def orderlist_check_placesell(average_price,tradingsymbol,quantity,dynamic_xfor_
             if current_time >= sell_time and not sell_triggered:
                 sell_order_id = place_sell_order(tradingsymbol,quantity,access_token)
                 sell_triggered = True
-                break
+                return("buy orders are not sell so At 3:15pm orders are cancelled,due to market timing")
             sleep_time.sleep(1)
         return sell_order_id
     except Exception as e:
