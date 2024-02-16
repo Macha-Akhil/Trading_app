@@ -1,4 +1,4 @@
-from flask import Flask,render_template, request ,jsonify,redirect, session,g
+from flask import Flask,render_template,request,jsonify,redirect,session,g
 import logging,json,os
 from kiteconnect import KiteConnect
 from opertions import get_index_info,get_strike_lowprice,buy_stock,check_and_cancel_order,orderlist_check_placesell

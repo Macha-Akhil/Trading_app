@@ -2,6 +2,8 @@ from flask import session,json
 import kiteconnect
 from datetime import datetime,time,timedelta
 import time as sleep_time
+import requests
+from retrying import retry
 # Replace these values with your API credentials
 api_key = "kra4acx0471qmwqt"
 def get_today_date():
@@ -158,6 +160,7 @@ def buy_stock(indextime,items_to_buy,access_token):
 # STEP - 4 (SUB)
 # If one stock ce or pe buy than other ce or pe get cancelled ( Below 4 functions for that:)   
 # Function to check order status
+@retry(wait_fixed=2000)
 def check_order_status(order_id,access_token):
     try:
         kite = kiteconnect.KiteConnect(api_key, access_token)
@@ -171,6 +174,7 @@ def check_order_status(order_id,access_token):
         return json.dumps({"Error in check_order_status":str(e)}),500
 # STEP - 4 (SUB)
 # Function to cancel another order (SELL) for a specific order ID
+#@retry(wait_fixed=2000)
 def cancel_other_order(order_id,access_token):
     try:
         kite = kiteconnect.KiteConnect(api_key, access_token)
@@ -182,6 +186,7 @@ def cancel_other_order(order_id,access_token):
         return json.dumps({"Error in cancel_other_order":str(e)}),500
 # STEP - 4 (SUB)
 #List to store order statuses
+#@retry(wait_fixed=2000)
 def check_status(order_ids,access_token):
     try:
         for order_id in order_ids:
@@ -194,20 +199,29 @@ def check_status(order_ids,access_token):
                 return order_status_complete
     except Exception as e:
         return json.dumps({"Error in check_status":str(e)}),500
-# STEP - 4         
+# STEP - 4   
+#@retry(wait_fixed=2000)      
 def check_and_cancel_order(order_ids,access_token):
     try:
+        current_time = datetime.now().time()
+        trigger_orders_cancel_time_str = "15:15"
+        trigger_orders_cancel_time = time(*map(int, trigger_orders_cancel_time_str.split(':')))
         while True:
             order_status = check_status(order_ids,access_token)
             if order_status is not None:
                 order_status_complete_data = order_status
                 break
+            elif current_time >= trigger_orders_cancel_time:
+                for order_info in order_ids:
+                    cancel_other_order(order_info,access_token)
+                return("Triggered orders are not buyed so At 3:15pm orders are cancelled.")
             sleep_time.sleep(2)
         return order_status_complete_data
     except Exception as e:
         return json.dumps({"Error in check_and_cancel_order":str(e)}),500
 # STEP - 5 (SUB)    
 # Sell the stock using details fetch live data (LTPDATA) and sell for up if graph goes up or sell for down if graph goes down  ( 3 functions used )
+@retry(wait_fixed=1000)
 def get_live_stock_price(symbol,access_token):
     try:
         kite = kiteconnect.KiteConnect(api_key, access_token)
@@ -217,6 +231,7 @@ def get_live_stock_price(symbol,access_token):
         return json.dumps({"Error in get_live_stock_price":str(e)}),500
 # STEP - 5 (SUB)
 # Sell the order 
+#@retry(wait_fixed=1000)
 def place_sell_order(tradingsymbol,quantity,access_token):
     kite = kiteconnect.KiteConnect(api_key, access_token)
     data_sell = []  
@@ -235,6 +250,7 @@ def place_sell_order(tradingsymbol,quantity,access_token):
         return json.dumps({"Error in place_sell_order":str(e)}),500
 # STEP - 5 
 # Check sell the order graph is up or down 
+#@retry(wait_fixed=1000)
 def orderlist_check_placesell(average_price,tradingsymbol,quantity,dynamic_xfor_add_up_sell,dynamic_xfor_sub_down_sell,access_token):
     try:
         #kite = kiteconnect.KiteConnect(api_key, access_token)
