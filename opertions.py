@@ -148,7 +148,7 @@ def buy_stock(indextime,items_to_buy,access_token):
                 triggered_data.append(order_id)
                 orders_to_cancel.append(order_id)
             except Exception as e:
-                print(f"Error placing order for tradingsymbol: {item[1]} - {e}")
+                #print(f"Error placing order for tradingsymbol: {item[1]} - {e}")
                 for order_to_cancel in orders_to_cancel:
                     order_variety = "regular"
                     kite.cancel_order(variety=order_variety,order_id=order_to_cancel)
