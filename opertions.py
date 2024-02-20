@@ -15,6 +15,7 @@ def get_today_date_tdngsymbl():
         formatted_expiry = today_date.strftime("%a, %d %b %Y %H:%M:%S GMT")
         return formatted_expiry
 #function -- before 10am submitting the request with required data
+@retry(wait_fixed=5000)
 def wait_until_market_open(target_time):
     current_time = datetime.now().time()
     while True:
