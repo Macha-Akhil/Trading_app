@@ -88,4 +88,4 @@ def main():
     except Exception as e:
         return json.dumps({"Error in app.py tradestock":str(e)}),500
 if __name__ == '__main__':
-     app.run(port=5001,debug=True)
+     app.run(port=5000,debug=True)
