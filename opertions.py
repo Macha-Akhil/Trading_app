@@ -161,7 +161,7 @@ def buy_stock(indextime,items_to_buy,access_token):
 # STEP - 4 (SUB)
 # If one stock ce or pe buy than other ce or pe get cancelled ( Below 4 functions for that:)   
 # Function to check order status
-@retry(wait_fixed=2000)
+@retry(wait_fixed=2000,stop_max_attempt_number=None) 
 def check_order_status(order_id,access_token):
     try:
         kite = kiteconnect.KiteConnect(api_key, access_token)
@@ -184,7 +184,9 @@ def cancel_other_order(order_id,access_token):
         if existing_order_status['status'] == "TRIGGER PENDING":
             kite.cancel_order(variety=order_variety,order_id=order_id) 
     except Exception as e:
-        return json.dumps({"Error in cancel_other_order":str(e)}),500
+        print(f"Error in check_order_status : {e}")
+        raise  # Re-raise the exception to trigger retry
+        #return json.dumps({"Error in cancel_other_order":str(e)}),500
 # STEP - 4 (SUB)
 #List to store order statuses
 #@retry(wait_fixed=2000)
@@ -219,17 +221,22 @@ def check_and_cancel_order(order_ids,access_token):
             sleep_time.sleep(2)
         return order_status_complete_data
     except Exception as e:
-        return json.dumps({"Error in check_and_cancel_order":str(e)}),500
+        print(f"Error occurred: {e}")
+        time.sleep(5)  # Wait for a few seconds before retrying
+        check_and_cancel_order(order_ids,access_token)  # Retry the main function
+    # except Exception as e:
+    #     return json.dumps({"Error in check_and_cancel_order":str(e)}),500
 # STEP - 5 (SUB)    
 # Sell the stock using details fetch live data (LTPDATA) and sell for up if graph goes up or sell for down if graph goes down  ( 3 functions used )
-@retry(wait_fixed=1000)
+@retry(wait_fixed=1000,stop_max_attempt_number=None) 
 def get_live_stock_price(symbol,access_token):
     try:
         kite = kiteconnect.KiteConnect(api_key, access_token)
         quote = kite.ltp("NFO:" + symbol)
         return quote["NFO:" + symbol]["last_price"]
     except Exception as e:
-        return json.dumps({"Error in get_live_stock_price":str(e)}),500
+        print(f"Error in get_live_stock_price : {e}")
+        #return json.dumps({"Error in get_live_stock_price":str(e)}),500
 # STEP - 5 (SUB)
 # Sell the order 
 #@retry(wait_fixed=1000)
